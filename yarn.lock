@@ -1833,7 +1833,7 @@ express-graphql@^0.6.11:
     http-errors "^1.3.0"
     raw-body "^2.1.0"
 
-express-session@^1.15.6:
+express-session@^1.15.2, express-session@^1.15.6:
   version "1.15.6"
   resolved "https://registry.yarnpkg.com/express-session/-/express-session-1.15.6.tgz#47b4160c88f42ab70fe8a508e31cbff76757ab0a"
   dependencies:
@@ -4069,7 +4069,7 @@ pgpass@1.x:
   dependencies:
     split "^1.0.0"
 
-pify@^2.0.0:
+pify@^2.0.0, pify@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/pify/-/pify-2.3.0.tgz#ed141a6ac043a849ea588498e7dca8b15330e90c"
 
@@ -4425,7 +4425,7 @@ request@2.81.0:
     tunnel-agent "^0.6.0"
     uuid "^3.0.0"
 
-request@^2.78.0, request@^2.83.0:
+request@^2.78.0, request@^2.81.0, request@^2.83.0:
   version "2.83.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.83.0.tgz#ca0b65da02ed62935887808e6f510381034e3356"
   dependencies:
@@ -5082,6 +5082,15 @@ verror@1.10.0:
     assert-plus "^1.0.0"
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
+
+"wafer-node-session@git+https://github.com/xteep/wafer-node-session.git":
+  version "1.0.9"
+  resolved "git+https://github.com/xteep/wafer-node-session.git#a8e5b91b91c4541bdf27b19f73b31081555eacca"
+  dependencies:
+    co "^4.6.0"
+    express-session "^1.15.2"
+    pify "^2.3.0"
+    request "^2.81.0"
 
 walker@~1.0.5:
   version "1.0.7"

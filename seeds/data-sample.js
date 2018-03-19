@@ -13,7 +13,7 @@ module.exports.seed = async db => {
   // Create 10 random website users (as an example)
   const users = Array.from({ length: 10 }).map(() => ({
     display_name: faker.name.findName(),
-    image_url: faker.internet.avatar(),
+    photo: faker.internet.avatar(),
   }));
 
   await Promise.all(
@@ -29,10 +29,19 @@ module.exports.seed = async db => {
             .first()
             .then(u =>
               db
-                .table('emails')
+                .table('logins')
                 .insert({
                   user_id: u.id,
-                  email: faker.internet.email().toLowerCase(),
+                  provider: 'test',
+                  id: faker.random.uuid(),
+                  username: faker.name.findName(),
+                  tokens: {
+                    access_token: faker.random.uuid(),
+                    refresh_token: faker.random.uuid(),
+                  },
+                  profile: {
+                    desc: faker.random.words(),
+                  },
                 })
                 .then(() => u),
             ),
@@ -41,62 +50,37 @@ module.exports.seed = async db => {
     ),
   );
 
-  // Create 500 stories
-  const stories = Array.from({ length: 500 }).map(() =>
-    Object.assign(
-      {
-        author_id: users[faker.random.number({ min: 0, max: users.length - 1 })].id,
-        title: faker.lorem
-          .sentence(faker.random.number({ min: 4, max: 7 }))
-          .slice(0, -1)
-          .substr(0, 80),
-      },
-      Math.random() > 0.3 ? { text: faker.lorem.text() } : { url: faker.internet.url() },
-      (date => ({ created_at: date, updated_at: date }))(faker.date.past()),
-    ),
-  );
+  const playlists = Array.from({ length: 5 }).map(() => ({
+    title: faker.lorem.word(),
+    thumbnail: faker.internet.avatar(),
+    description: faker.lorem.sentence(),
+  }));
 
   await Promise.all(
-    stories.map(story =>
+    playlists.map(playlist =>
       db
-        .table('stories')
-        .insert(story)
+        .table('playlists')
+        .insert(playlist)
         .returning('id')
         .then(rows =>
           db
-            .table('stories')
+            .table('playlists')
             .where('id', '=', rows[0])
-            .first(),
-        )
-        .then(row => Object.assign(story, row)),
-    ),
-  );
-
-  // Create some user comments
-  const comments = Array.from({ length: 2000 }).map(() =>
-    Object.assign(
-      {
-        story_id: stories[faker.random.number({ min: 0, max: stories.length - 1 })].id,
-        author_id: users[faker.random.number({ min: 0, max: users.length - 1 })].id,
-        text: faker.lorem.sentences(faker.random.number({ min: 1, max: 10 })),
-      },
-      (date => ({ created_at: date, updated_at: date }))(faker.date.past()),
-    ),
-  );
-
-  await Promise.all(
-    comments.map(comment =>
-      db
-        .table('comments')
-        .insert(comment)
-        .returning('id')
-        .then(rows =>
-          db
-            .table('comments')
-            .where('id', '=', rows[0])
-            .first(),
-        )
-        .then(row => Object.assign(comment, row)),
+            .first()
+            .then(u => {
+              Promise.all(
+                Array.from({ length: 10 }).map(() =>
+                  db.table('videos').insert({
+                    title: faker.random.words(),
+                    url: faker.internet.url(),
+                    thumbnail: faker.image.imageUrl(),
+                    description: faker.random.words(),
+                    playlist: u.id,
+                  }),
+                ),
+              );
+            }),
+        ),
     ),
   );
 };

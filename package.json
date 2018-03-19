@@ -35,7 +35,8 @@
     "pretty-error": "^2.1.1",
     "redis": "^2.8.0",
     "source-map-support": "^0.5.0",
-    "validator": "^9.2.0"
+    "validator": "^9.2.0",
+    "wafer-node-session": "git+https://github.com/xteep/wafer-node-session.git"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

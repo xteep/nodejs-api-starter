@@ -39,90 +39,48 @@ class Context {
    * For more information visit https://github.com/facebook/dataloader
    */
 
+  videoById = new DataLoader(keys =>
+    db
+      .table('videos')
+      .whereIn('id', keys)
+      .select()
+      .then(mapTo(keys, x => x.id)),
+  );
+
+  videosByPlaylistId = new DataLoader(keys =>
+    db
+      .table('videos')
+      .whereIn('playlist', keys)
+      .select()
+      .then(mapToMany(keys, x => x.playlist)),
+  );
+
+  playlistById = new DataLoader(keys =>
+    db
+      .table('playlists')
+      .whereIn('id', keys)
+      .select()
+      .then(mapTo(keys, x => x.id)),
+  );
+
+  progressByUserIdAndVideoId = {
+    load: (userId, videoId) =>
+      db
+        .table('progresses')
+        .where({
+          user_id: userId,
+          video_id: videoId,
+        })
+        .select()
+        .then(rows => (rows[0] ? rows[0].progress : 0)),
+  };
+
   userById = new DataLoader(keys =>
     db
       .table('users')
       .whereIn('id', keys)
       .select()
       .then(mapTo(keys, x => x.id)),
-  );
-
-  emailById = new DataLoader(keys =>
-    db
-      .table('emails')
-      .whereIn('id', keys)
-      .select()
-      .then(mapTo(keys, x => x.id)),
-  );
-
-  emailsByUserId = new DataLoader(keys =>
-    db
-      .table('emails')
-      .whereIn('user_id', keys)
-      .select()
-      .then(mapToMany(keys, x => x.user_id)),
-  );
-
-  storyById = new DataLoader(keys =>
-    db
-      .table('stories')
-      .whereIn('id', keys)
-      .select()
-      .then(mapTo(keys, x => x.id)),
-  );
-
-  storyCommentsCount = new DataLoader(keys =>
-    db
-      .table('stories')
-      .leftJoin('comments', 'stories.id', 'comments.story_id')
-      .whereIn('stories.id', keys)
-      .groupBy('stories.id')
-      .select('stories.id', db.raw('count(comments.story_id)'))
-      .then(mapToValues(keys, x => x.id, x => x.count)),
-  );
-
-  storyPointsCount = new DataLoader(keys =>
-    db
-      .table('stories')
-      .leftJoin('story_points', 'stories.id', 'story_points.story_id')
-      .whereIn('stories.id', keys)
-      .groupBy('stories.id')
-      .select('stories.id', db.raw('count(story_points.story_id)'))
-      .then(mapToValues(keys, x => x.id, x => x.count)),
-  );
-
-  commentById = new DataLoader(keys =>
-    db
-      .table('comments')
-      .whereIn('id', keys)
-      .select()
-      .then(mapTo(keys, x => x.id)),
-  );
-
-  commentsByStoryId = new DataLoader(keys =>
-    db
-      .table('comments')
-      .whereIn('story_id', keys)
-      .select()
-      .then(mapToMany(keys, x => x.story_id)),
-  );
-
-  commentsByParentId = new DataLoader(keys =>
-    db
-      .table('comments')
-      .whereIn('parent_id', keys)
-      .select()
-      .then(mapToMany(keys, x => x.parent_id)),
-  );
-
-  commentPointsCount = new DataLoader(keys =>
-    db
-      .table('comments')
-      .leftJoin('comment_points', 'comments.id', 'comment_points.comment_id')
-      .whereIn('comments.id', keys)
-      .groupBy('comments.id')
-      .select('comments.id', db.raw('count(comment_points.comment_id)'))
-      .then(mapToValues(keys, x => x.id, x => x.count)),
   );
 
   /*

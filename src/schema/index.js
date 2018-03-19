@@ -9,10 +9,9 @@
 
 import { GraphQLSchema, GraphQLObjectType } from 'graphql';
 
-import userQueries from './user/queries';
-import storyQueries from './story/queries';
-import storyMutations from './story/mutations';
-import commentMutations from './comment/mutations';
+import playlistQueries from './playlist/queries';
+import videoQueries from './video/queries';
+import progressMutations from './progress/mutations';
 import { nodeField, nodesField } from './node';
 
 export default new GraphQLSchema({
@@ -21,15 +20,14 @@ export default new GraphQLSchema({
     fields: {
       node: nodeField,
       nodes: nodesField,
-      ...userQueries,
-      ...storyQueries,
+      ...playlistQueries,
+      ...videoQueries,
     },
   }),
   mutation: new GraphQLObjectType({
     name: 'Mutation',
     fields: {
-      ...storyMutations,
-      ...commentMutations,
+      ...progressMutations,
     },
   }),
 });

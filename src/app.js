@@ -13,7 +13,7 @@ import cors from 'cors';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
-import session from 'express-session';
+import session from 'wafer-node-session';
 import connectRedis from 'connect-redis';
 import flash from 'express-flash';
 import i18next from 'i18next';
@@ -74,16 +74,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(
   session({
+    appId: process.env.APP_ID,
+    appSecret: process.env.APP_SECRET,
+    loginPath: '/login',
+    loginCallback: passport.loginCallback,
     store: new (connectRedis(session))({ client: redis }),
-    name: 'sid',
-    resave: true,
-    saveUninitialized: true,
-    secret: process.env.SESSION_SECRET,
   }),
 );
 app.use(i18nextMiddleware.handle(i18next));
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.session);
 app.use(flash());
 
 app.use(accountRoutes);

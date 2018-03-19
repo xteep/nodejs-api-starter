@@ -1,12 +1,3 @@
-/**
- * Copyright © 2016-present Kriasoft.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
-/* @flow */
-
 import { GraphQLNonNull, GraphQLInt } from 'graphql';
 import {
   connectionDefinitions,
@@ -16,13 +7,13 @@ import {
 } from 'graphql-relay';
 
 import db from '../../db';
-import StoryType from './StoryType';
+import PlaylistType from './PlaylistType';
 import type Context from '../../Context';
 
-const stories = {
+const playlists = {
   type: connectionDefinitions({
-    name: 'Story',
-    nodeType: StoryType,
+    name: 'Playlist',
+    nodeType: PlaylistType,
     connectionFields: {
       totalCount: { type: new GraphQLNonNull(GraphQLInt) },
     },
@@ -34,16 +25,16 @@ const stories = {
 
     const [data, totalCount] = await Promise.all([
       db
-        .table('stories')
+        .table('playlists')
         .orderBy('created_at', 'desc')
         .limit(limit)
         .offset(offset)
         .then(rows => {
-          rows.forEach(x => ctx.storyById.prime(x.id, x));
+          rows.forEach(x => ctx.playlistById.prime(x.id, x));
           return rows;
         }),
       db
-        .table('stories')
+        .table('playlists')
         .count()
         .then(x => x[0].count),
     ]);
@@ -59,5 +50,5 @@ const stories = {
 };
 
 export default {
-  stories,
+  playlists,
 };
